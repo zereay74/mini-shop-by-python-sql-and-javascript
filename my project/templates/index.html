@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Shop Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Mini Shop Management</h1>
+
+    <form id="add-item-form" method="POST" action="/add_item">
+        <input type="text" name="item_name" placeholder="Item Name" required>
+        <input type="number" name="item_price" placeholder="Price" required step="0.01">
+        <input type="number" name="item_quantity" placeholder="Quantity" required>
+        <button type="submit">Add Item</button>
+    </form>
+
+    <ul>
+        <li class="item-header">
+            <span>Item Name</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Sold</span>
+        </li>
+        {% for item in items %}
+        <li>
+            <span>{{ item['name'] }}</span>
+            <span>${{ item['price'] }}</span>
+            <span>{{ item['quantity'] }}</span>
+            <span>
+                <form method="POST" action="/mark_sold/{{ item['id'] }}">
+                    <button type="submit" class="mark-sold-button">Sold</button>
+                </form>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('#add-item-form');
+
+            form.addEventListener('submit', function (event) {
+                const nameInput = document.querySelector('input[name="item_name"]');
+                const priceInput = document.querySelector('input[name="item_price"]');
+                const quantityInput = document.querySelector('input[name="item_quantity"]');
+                const nameValue = nameInput.value.trim();
+                const priceValue = priceInput.value.trim();
+                const quantityValue = quantityInput.value.trim();
+
+                if (!nameValue || !priceValue || !quantityValue) {
+                    event.preventDefault();
+                    alert('Please fill in all fields.');
+                }
+            });
+
+            const markSoldButtons = document.querySelectorAll('.mark-sold-button');
+
+            markSoldButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    if (!confirm('Mark this item as sold?')) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
